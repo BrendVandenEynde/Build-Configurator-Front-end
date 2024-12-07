@@ -1,24 +1,25 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Layout from '../components/Layout.vue';
-import Login from '../views/Login.vue'; // Ensure this path is correct
+import HomeView from '../views/HomeView.vue';
+import Login from '../views/Login.vue';
 
 const routes = [
     {
         path: '/',
         name: 'Home',
-        component: Layout, // Use the Layout component here
+        component: Layout,
         children: [
             {
                 path: '', // Default child route
-                component: () => import('../App.vue'), // Lazy load App.vue if needed
+                name: 'HomeDefault',
+                component: HomeView, // This should render when accessing '/'
             },
-            // Other child routes can be added here
+            {
+                path: 'login',
+                name: 'Login',
+                component: Login, // This should render when accessing '/login'
+            },
         ],
-    },
-    {
-        path: '/login',
-        name: 'Login',
-        component: Login,
     },
 ];
 
