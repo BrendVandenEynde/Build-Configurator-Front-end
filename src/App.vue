@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted } from 'vue';
+import ModelCard from './components/ModelCard.vue';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -9,37 +10,31 @@ const loadModel = (canvas, modelPath) => {
   const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
 
-  // Set renderer size to match the canvas dimensions
   renderer.setSize(canvas.clientWidth, canvas.clientHeight);
   camera.position.z = 2;
 
-  // Add lighting
   const ambientLight = new THREE.AmbientLight(0xffffff, 1);
   scene.add(ambientLight);
 
-  let model; // To store the loaded model for rotation
+  let model;
 
-  // Load the 3D model
   const loader = new GLTFLoader();
   loader.load(
     modelPath,
     (gltf) => {
-      // Scale and position the model
       model = gltf.scene;
       model.scale.set(0.25, 0.25, 0.25);
       model.position.set(0, -0.8, 0);
 
-      //Override materials to remove color
       model.traverse((child) => {
-      if (child.isMesh) {
-      child.material = new THREE.MeshBasicMaterial({ color: 0xA9A9A9 }); // White material
-      child.material.side = THREE.DoubleSide; // Render both sides of the mesh
-      }
-    });
+        if (child.isMesh) {
+          child.material = new THREE.MeshBasicMaterial({ color: 0xA9A9A9 });
+          child.material.side = THREE.DoubleSide;
+        }
+      });
 
       scene.add(model);
-
-      animate(); // Start the animation loop once the model is loaded
+      animate();
     },
     undefined,
     (error) => {
@@ -47,20 +42,16 @@ const loadModel = (canvas, modelPath) => {
     }
   );
 
-  // Add rotation logic
   const animate = () => {
     requestAnimationFrame(animate);
-
     if (model) {
-      model.rotation.y += 0.001; // Rotate model around the Y-axis
+      model.rotation.y += 0.001;
     }
-
     renderer.render(scene, camera);
   };
 
-  // Add OrbitControls for user interaction
   const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true; // Smooth the camera movement
+  controls.enableDamping = true;
   controls.dampingFactor = 0.1;
   controls.rotateSpeed = 0.5;
 
@@ -68,13 +59,11 @@ const loadModel = (canvas, modelPath) => {
 };
 
 onMounted(() => {
-  // Select the canvas elements
   const canvas1 = document.querySelector('.canvas1');
   const canvas2 = document.querySelector('.canvas2');
 
-  // Load models for each canvas
   if (canvas1) loadModel(canvas1, '/model/shoes_with_heart_heel/scene.gltf');
-  if (canvas2) loadModel(canvas2, '/model/nike_shoe/scene.gltf');
+  if (canvas2) loadModel(canvas2, '/model/shoe-optimized-arne.glb');
 });
 </script>
 
@@ -87,30 +76,51 @@ onMounted(() => {
       <button class="headerMain_login">Login</button>
     </a>
   </header>
-  
+
   <div class="models-container">
-    <h1>Model we offer to configure.</h1>
+    <h1>Models we offer to configure.</h1>
     <div class="model-container-flexbox">
-      <!-- Model 1 -->
-      <div class="model-container-model">
-        <canvas class="model-container-model-canvas canvas1"></canvas>
-        <div class="model-container-model-info">
-          <h2>Heart heel</h2>
-          <p>Price: 240$</p>
-          <p>Size: 37-42</p>
-          <button class="model-container-model-button">Start configuration</button>
-        </div>
-      </div>
-      <!-- Model 2 -->
-      <div class="model-container-model">
-        <canvas class="model-container-model-canvas canvas2"></canvas>
-        <div class="model-container-model-info">
-          <h2>Swear Nike</h2>
-          <p>Price: 160$</p>
-          <p>Size: 37-45</p>
-          <button class="model-container-model-button">Start configuration</button>
-        </div>
-      </div>
+      <!-- Model Card for Heart Heel -->
+      <ModelCard title="Heart Heel" price="240$" size="37-42" canvasClass="canvas1" link="/heart-heel-config" />
+      <!-- Model Card for Sneaker -->
+      <ModelCard title="Sneaker" price="180$" size="38-46" canvasClass="canvas2"
+        link="https://build-sneaker-model-config.onrender.com/" />
     </div>
   </div>
 </template>
+
+<style>
+.models-container {
+  text-align: center;
+}
+
+.model-container-flexbox {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.headerMainfront {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+}
+
+.headerMain_logo img {
+  height: 40px;
+}
+
+.headerMain_login {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.headerMain_login:hover {
+  background-color: #0056b3;
+}
+</style>
