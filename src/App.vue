@@ -1,9 +1,13 @@
 <script setup>
 import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import ModelCard from './components/ModelCard.vue';
+import Layout from './components/Layout.vue';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
+const router = useRouter(); // Initialize the router
 
 const loadModel = (canvas, modelPath) => {
   const scene = new THREE.Scene();
@@ -68,25 +72,17 @@ onMounted(() => {
 </script>
 
 <template>
-  <header class="headerMainfront">
-    <div class="headerMain_logo">
-      <img src="https://sneaker-configurator.vercel.app/media/SWEAR_Logo.webp" alt="Swear logo" class="headerLogo">
+  <Layout>
+    <div class="models-container">
+      <h1>Models we offer to configure.</h1>
+      <div class="model-container-flexbox">
+        <ModelCard title="Heart Heel" price="240$" size="37-42" canvasClass="canvas1"
+          :link="'https://your-external-config-url.com'" />
+        <ModelCard title="Sneaker" price="180$" size="38-46" canvasClass="canvas2"
+          link="https://build-sneaker-model-config.onrender.com/" />
+      </div>
     </div>
-    <a href="/login">
-      <button class="headerMain_login">Login</button>
-    </a>
-  </header>
-
-  <div class="models-container">
-    <h1>Models we offer to configure.</h1>
-    <div class="model-container-flexbox">
-      <!-- Model Card for Heart Heel -->
-      <ModelCard title="Heart Heel" price="240$" size="37-42" canvasClass="canvas1" link="/heart-heel-config" />
-      <!-- Model Card for Sneaker -->
-      <ModelCard title="Sneaker" price="180$" size="38-46" canvasClass="canvas2"
-        link="https://build-sneaker-model-config.onrender.com/" />
-    </div>
-  </div>
+  </Layout>
 </template>
 
 <style>
@@ -98,29 +94,5 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-}
-
-.headerMainfront {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-}
-
-.headerMain_logo img {
-  height: 40px;
-}
-
-.headerMain_login {
-  padding: 10px 15px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.headerMain_login:hover {
-  background-color: #0056b3;
 }
 </style>
