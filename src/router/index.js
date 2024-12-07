@@ -1,11 +1,25 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HeartHeelConfig from '../pages/HeartHeelConfig.vue';
-import SneakerConfig from '../pages/SneakerConfig.vue';
+import Layout from '../components/Layout.vue';
+import Login from '../views/Login.vue'; // Ensure this path is correct
 
 const routes = [
-    { path: '/', component: () => import('../App.vue') }, 
-    { path: '/heart-heel-config', component: HeartHeelConfig },
-    { path: '/sneaker-config', component: SneakerConfig },
+    {
+        path: '/',
+        name: 'Home',
+        component: Layout, // Use the Layout component here
+        children: [
+            {
+                path: '', // Default child route
+                component: () => import('../App.vue'), // Lazy load App.vue if needed
+            },
+            // Other child routes can be added here
+        ],
+    },
+    {
+        path: '/login',
+        name: 'Login',
+        component: Login,
+    },
 ];
 
 const router = createRouter({
