@@ -1,15 +1,15 @@
 <template>
   <div class="login-container">
-      <video autoplay muted loop class="background-video">
-          <source src="../../public/assets/SwearLondonVideo.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-      </video>
-      <div class="login-form">
-          <h1>Login</h1>
-          <input type="text" placeholder="Username" v-model="username" />
-          <input type="password" placeholder="Password" v-model="password" />
-          <button @click="handleLogin">Login</button>
-      </div>
+    <video autoplay muted loop class="background-video">
+      <source src="../../public/assets/SwearLondonVideo.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+    <div class="login-form">
+      <h1>Login</h1>
+      <input type="text" placeholder="Username" v-model="username" class="input-field" />
+      <input type="password" placeholder="Password" v-model="password" class="input-field" />
+      <button class="login-button" @click="handleLogin">Login</button>
+    </div>
   </div>
 </template>
 
@@ -25,21 +25,28 @@ const handleLogin = () => {
 </script>
 
 <style scoped>
+/* Prevent scrolling on body and html */
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden; /* Prevent scrolling */
+}
+
 .login-container {
   position: relative;
   width: 100%;
-  height: 100vh;
-  overflow: hidden;
+  height: 100vh; /* Full viewport height */
+  overflow: hidden; /* Prevent scrolling within the container */
 }
 
 .background-video {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -1;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  object-fit: cover; /* Cover the entire area without distortion */
+  z-index: -1; /* Place the video behind the login form */
 }
 
 .login-form {
@@ -49,12 +56,14 @@ const handleLogin = () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  height: 100%; /* Allow form to occupy full height */
   color: white;
   text-align: center;
+  padding: 20px; /* Optional padding for aesthetics */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optional shadow for depth */
 }
 
-input {
+.input-field {
   margin: 10px 0;
   padding: 10px;
   width: 200px;
@@ -62,7 +71,7 @@ input {
   border-radius: 5px;
 }
 
-button {
+.login-button {
   padding: 10px 20px;
   background-color: #007bff;
   color: white;
@@ -71,7 +80,7 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+.login-button:hover {
   background-color: #0056b3;
 }
 </style>

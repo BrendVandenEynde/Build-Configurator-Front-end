@@ -1,21 +1,24 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-   
 }
-#app{
+
+#app {
     font: Helvetica, sans-serif;
 }
-header{
+
+header {
     padding: 10px 20px;
 }
-.headerMainfront{
+
+.headerMainfront {
     display: flex;
     justify-content: space-between;
     background-color: #6AF244;
 }
-.headerMain_login{
+
+.headerMain_login {
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -27,40 +30,40 @@ header{
     color: #6AF244;
     font-size: 1.2rem;
 }
-.headerLogo{
+
+.headerLogo {
     width: 250px;
     margin-top: 20px;
 }
 
-.models-container{
-    background-color: #fff ;
+.models-container {
+    background-color: #fff;
 }
 
-.model-container-flexbox{
+.model-container-flexbox {
     display: flex;
     padding: 10px;
     justify-content: center;
 }
 
-.model-container-model{
+.model-container-model {
     width: 50%;
     padding: 20px;
     margin: 10px;
     border: 2px solid #6AF244;
     background-color: azure;
-
     justify-content: center;
     max-width: 300px;
 }
 
-.model-container-model-canvas{
+.model-container-model-canvas {
     width: 100%;
     height: 200px;
     align-items: center;
     justify-content: center;
 }
 
-.model-container-model-button{
+.model-container-model-button {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -70,4 +73,27 @@ header{
     font-size: 0.8rem;
     margin-top: 10px;
     cursor: pointer;
+}
+
+/* New Styles for Login Form */
+.input-field {
+    margin: 10px 0;
+    padding: 10px;
+    width: 200px;
+    border: none;
+    border-radius: 5px;
+}
+
+.login-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    justify-content: center;
+}
+
+.login-button:hover {
+    background-color: #0056b3;
 }

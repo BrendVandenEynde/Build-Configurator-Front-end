@@ -47,6 +47,7 @@ const navigateToLogin = () => {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    justify-content: center;
 }
 
 .headerMain_login:hover {
