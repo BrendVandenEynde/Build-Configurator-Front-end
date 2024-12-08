@@ -24,6 +24,15 @@ const routes = [
                 path: 'dashboard', // New route for the dashboard
                 name: 'Dashboard',
                 component: Dashboard, // This should render when accessing '/dashboard'
+                beforeEnter: (to, from, next) => {
+                    // Check if the user has a valid JWT token
+                    const token = localStorage.getItem('authToken');
+                    if (token) {
+                        next(); // Allow access to the dashboard
+                    } else {
+                        next('/login'); // Redirect to login if no token
+                    }
+                },
             },
         ],
     },

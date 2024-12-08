@@ -1,6 +1,11 @@
 <script setup>
 import { defineProps, ref, onMounted } from 'vue';
+import axios from 'axios';  // Using axios for API calls
 
+// Set the base URL for axios requests globally (you can also do this in a global configuration file)
+axios.defaults.baseURL = 'https://build-configurator-back-end.onrender.com/api/v1';
+
+// Define the props
 const props = defineProps({
     order: {
         type: Object,
@@ -10,29 +15,66 @@ const props = defineProps({
         type: Function,
         required: true,
     },
+    updateOrderStatus: {
+        type: Function,
+        required: true, // The method to update order status passed from Dashboard
+    }
 });
 
-// Placeholder functions for the buttons
+const ship = async () => {
+    console.log('Shipped clicked');
+
+    // Retrieve token from localStorage
+    const token = localStorage.getItem('authToken');  // Use localStorage to get the token
+
+    if (!token) {
+        console.error('Authorization token is missing');
+        return;
+    }
+
+    try {
+        // Make an API call to update the order status to 'shipped' in the backend
+        const response = await axios.put(
+            `https://build-configurator-back-end.onrender.com/api/v1/orders/${props.order._id}`,
+            { status: 'shipped' },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,  // Add the token in the Authorization header
+                }
+            }
+        );
+
+        if (response.status === 200) {
+            console.log('Order status updated successfully');
+            // Notify the parent (Dashboard) to update the status in the UI
+            props.updateOrderStatus(props.order._id, 'shipped');
+            // Close the detailed card view after the "Shipped" action
+            props.close();
+        }
+    } catch (error) {
+        console.error('Error updating order status:', error.response?.data || error.message);
+        // Optionally, you can handle the error here (show a message, etc.)
+    }
+};
+
+// Function to handle "Remove / Cancel" button (this can be extended further)
 const remove = () => {
     console.log('Remove / Cancel clicked');
+    // Placeholder for the remove logic (if needed)
 };
 
-const ship = () => {
-    console.log('Shipped clicked');
-};
-
-// Ref for the canvas element
+// Canvas reference for the shoe/heel visualization
 const canvasRef = ref(null);
 
-// Function to draw the configured shoe on the canvas
+// Function to draw the configured shoe on the canvas based on the order's model type
 const drawShoe = () => {
     const canvas = canvasRef.value;
     if (canvas) {
         const ctx = canvas.getContext('2d');
-        // Clear the canvas
+        // Clear the canvas before drawing
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Draw the shoe based on the model type and layers
+        // Draw the appropriate shoe type (heel or sneaker)
         if (props.order.modelType === 'heel') {
             drawHeel(ctx, props.order.heelLayers);
         } else if (props.order.modelType === 'sneaker') {
@@ -41,54 +83,45 @@ const drawShoe = () => {
     }
 };
 
-// Function to draw a heel model
+// Function to draw the heel model
 const drawHeel = (ctx, layers) => {
-    // Assuming layers are structured as an object with different parts
-    ctx.fillStyle = layers.Object_2.color; // Example for color of a specific part
-    ctx.fillRect(20, 50, 60, 30); // Drawing a rectangle for demo
-
-    // Draw other parts similarly...
-    ctx.fillStyle = layers.Object_3.color; // Change color for another part
-    ctx.fillRect(20, 20, 60, 30);
+    if (layers) {
+        // Example drawing for heel model (you can extend this logic based on layers structure)
+        ctx.fillStyle = layers.Object_2.color;
+        ctx.fillRect(20, 50, 60, 30); // Drawing a rectangle for demo
+        ctx.fillStyle = layers.Object_3.color;
+        ctx.fillRect(20, 20, 60, 30);
+    }
 };
 
-// Function to draw a sneaker model
+// Function to draw the sneaker model
 const drawSneaker = (ctx, layers) => {
     if (!layers) return; // Safety check for layers
 
-    console.log(layers); // Debugging to check sneaker layer data
-    
-    // Drawing sole part
+    // Example drawing for sneaker model (you can extend this logic based on layers structure)
     if (layers.sole1) {
         ctx.fillStyle = layers.sole1.color;
-        ctx.fillRect(20, 70, 160, 20); // Sole rectangle (adjust coordinates as needed)
+        ctx.fillRect(20, 70, 160, 20); // Sole rectangle
     }
-    
-    // Drawing outside1 part
     if (layers.outside1) {
         ctx.fillStyle = layers.outside1.color;
-        ctx.fillRect(20, 40, 160, 30); // Outside part (adjust coordinates as needed)
+        ctx.fillRect(20, 40, 160, 30); // Outside part
     }
-
-    // Drawing outside2 part
     if (layers.outside2) {
         ctx.fillStyle = layers.outside2.color;
-        ctx.fillRect(20, 10, 160, 30); // Another outside part (adjust coordinates as needed)
+        ctx.fillRect(20, 10, 160, 30); // Another outside part
     }
-
-    // Drawing inside part
     if (layers.inside) {
         ctx.fillStyle = layers.inside.color;
-        ctx.fillRect(40, 50, 120, 20); // Inside part (adjust coordinates as needed)
+        ctx.fillRect(40, 50, 120, 20); // Inside part
     }
-
-    // Drawing laces part
     if (layers.laces) {
         ctx.fillStyle = layers.laces.color;
-        ctx.fillRect(40, 35, 120, 10); // Laces position (adjust coordinates as needed)
+        ctx.fillRect(40, 35, 120, 10); // Laces part
     }
 };
 
+// Call the draw function when the component is mounted
 onMounted(() => {
     drawShoe();
 });
@@ -130,33 +163,26 @@ onMounted(() => {
     justify-content: center;
     align-items: center;
     z-index: 999;
-    /* Ensure it's on top of other elements */
 }
 
 .card {
     background: white;
     border-radius: 12px;
-    /* Rounded corners */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     padding: 20px;
     max-width: 600px;
-    /* Adjust the width as needed */
     width: 90%;
-    /* Responsive width */
     display: flex;
     flex-direction: column;
     transition: transform 0.3s ease;
-    /* Smooth animation */
 }
 
 .card:hover {
     transform: scale(1.02);
-    /* Slightly enlarge on hover */
 }
 
 .details {
     flex-grow: 1;
-    /* Allow details to grow */
 }
 
 .canvas-container {
@@ -165,13 +191,9 @@ onMounted(() => {
     justify-content: center;
     align-items: center;
     border: 1px solid #ccc;
-    /* Optional border for the canvas */
     padding: 10px;
-    /* Padding around the canvas */
     border-radius: 6px;
-    /* Rounded corners for the canvas container */
     background: #f9f9f9;
-    /* Light background for contrast */
 }
 
 .actions {
@@ -184,38 +206,30 @@ onMounted(() => {
     padding: 12px 24px;
     border: none;
     border-radius: 6px;
-    /* Rounded button corners */
     cursor: pointer;
     font-size: 1em;
-    /* Button text size */
     transition: background-color 0.3s, transform 0.2s;
-    /* Smooth transition */
 }
 
 .btn:hover {
     transform: translateY(-2px);
-    /* Slight lift effect on hover */
 }
 
 .cancel {
     background-color: #ff4d4d;
-    /* Red background for cancel */
     color: white;
 }
 
 .cancel:hover {
     background-color: #ff1a1a;
-    /* Darker red on hover */
 }
 
 .ship {
     background-color: #4caf50;
-    /* Green background for shipped */
     color: white;
 }
 
 .ship:hover {
     background-color: #388e3c;
-    /* Darker green on hover */
 }
 </style>

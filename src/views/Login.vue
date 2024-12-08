@@ -17,17 +17,29 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios'; // Import axios for API calls
 
 const username = ref('');
 const password = ref('');
 const errorMessage = ref('');
 const router = useRouter();
 
-const handleLogin = () => {
-  // Simulated login check (replace with actual logic later)
-  if (username.value === 'admin' && password.value === 'admin123') {
-    router.push('/dashboard'); // Redirect to admin dashboard
-  } else {
+const handleLogin = async () => {
+  try {
+    // Send login request to backend (replace with real endpoint)
+    const response = await axios.post('https://build-configurator-back-end.onrender.com/api/v1/users/login', {
+      username: username.value,
+      password: password.value,
+    });
+
+    if (response.status === 200) {
+      // Store the JWT token in localStorage
+      localStorage.setItem('authToken', response.data.token);
+
+      // Redirect to the dashboard
+      router.push('/dashboard');
+    }
+  } catch (error) {
     errorMessage.value = 'Invalid username or password.'; // Show error message
   }
 };

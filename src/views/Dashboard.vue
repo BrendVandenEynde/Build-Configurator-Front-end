@@ -11,6 +11,7 @@ const cancelledOrders = ref([]);
 const selectedOrder = ref(null);
 const showDetails = ref(false);
 
+// Fetch orders from the API
 const fetchOrders = async () => {
     try {
         const response = await axios.get(
@@ -18,21 +19,35 @@ const fetchOrders = async () => {
         );
         orders.value = response.data?.data?.orders || [];
 
-        // Categorize orders
-        inProductionOrders.value = orders.value.filter(
-            (order) => order.status === 'in production'
-        );
-        shippedDeliveredOrders.value = orders.value.filter((order) =>
-            ['shipped', 'delivered'].includes(order.status)
-        );
-        cancelledOrders.value = orders.value.filter(
-            (order) => order.status === 'cancelled'
-        );
+        // Categorize orders based on status
+        categorizeOrders();
     } catch (error) {
         console.error(
             'Error fetching orders:',
             error.response || error.message || error
         );
+    }
+};
+
+// Function to categorize orders into their respective lists
+const categorizeOrders = () => {
+    inProductionOrders.value = orders.value.filter(
+        (order) => order.status === 'in production'
+    );
+    shippedDeliveredOrders.value = orders.value.filter((order) =>
+        ['shipped', 'delivered'].includes(order.status)
+    );
+    cancelledOrders.value = orders.value.filter(
+        (order) => order.status === 'cancelled'
+    );
+};
+
+// Function to update the order status to 'shipped'
+const updateOrderStatus = (orderId, newStatus) => {
+    const orderIndex = orders.value.findIndex(order => order._id === orderId);
+    if (orderIndex !== -1) {
+        orders.value[orderIndex].status = newStatus;
+        categorizeOrders();  // Re-categorize orders after status update
     }
 };
 
@@ -86,7 +101,8 @@ onMounted(fetchOrders);
         </div>
 
         <!-- Conditional rendering of the OrderCardDetailed component -->
-        <OrderCardDetailed v-if="showDetails" :order="selectedOrder" :close="closeDetailView" />
+        <OrderCardDetailed v-if="showDetails" :order="selectedOrder" :close="closeDetailView"
+            :updateOrderStatus="updateOrderStatus" />
     </div>
 </template>
 
