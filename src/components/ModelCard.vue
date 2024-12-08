@@ -1,5 +1,5 @@
 <script setup>
-import { useRouter } from 'vue-router';
+import { defineProps } from 'vue';
 
 const props = defineProps({
   title: String,
@@ -9,16 +9,9 @@ const props = defineProps({
   link: String, // The link can be internal (e.g., "/sneaker-config") or external (e.g., full URL)
 });
 
-const router = useRouter();
-
 const handleButtonClick = () => {
-  if (link.startsWith('http')) {
-    // If the link is an external URL, open it in a new tab
-    window.open(link, '_blank');
-  } else {
-    // If it's an internal route, use Vue Router to navigate
-    router.push(link);
-  }
+  // Redirect to the specified link in the same tab
+  window.location.href = props.link;
 };
 </script>
 
