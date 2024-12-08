@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
       <video autoplay muted loop class="background-video">
-          <source src="../assets/background-video.mp4" type="video/mp4" />
+          <source src="../../public/assets/SwearLondonVideo.mp4" type="video/mp4" />
           Your browser does not support the video tag.
       </video>
       <div class="login-form">
