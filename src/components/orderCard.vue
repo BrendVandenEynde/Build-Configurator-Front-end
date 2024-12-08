@@ -1,5 +1,7 @@
 <script setup>
-import { defineProps, onMounted } from 'vue';
+import { defineProps, onMounted, onUnmounted } from 'vue';
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 const props = defineProps({
     orderNumber: String,
@@ -8,38 +10,158 @@ const props = defineProps({
     shoeSize: Number,
     status: String,
     createdAt: String,
-    modelType: String,
-    canvasClass: String, // Optional for custom canvas styles
+    modelType: String, // "sneaker" or "heel"
+    canvasClass: String, // CSS class for the canvas element
+    layers: Object, // Contains the materials and colors from the API
 });
 
+// References for cleanup
+let renderer, scene, camera, animationId;
+let model = null;
+
 const initializeThreeJS = () => {
-    // Add Three.js logic here
     const canvas = document.querySelector(`.${props.canvasClass}`);
-    if (canvas) {
-        const renderer = new THREE.WebGLRenderer({ canvas });
-        renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-        camera.position.z = 5;
-
-        const geometry = new THREE.BoxGeometry();
-        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        const cube = new THREE.Mesh(geometry, material);
-        scene.add(cube);
-
-        const animate = () => {
-            requestAnimationFrame(animate);
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.01;
-            renderer.render(scene, camera);
-        };
-        animate();
+    if (!canvas) {
+        console.error(`Canvas element not found for: ${props.canvasClass}`);
+        return;
     }
+
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xf9f9f9);
+
+    camera = new THREE.PerspectiveCamera(
+        45,
+        canvas.clientWidth / canvas.clientHeight,
+        0.1,
+        1000
+    );
+    camera.position.set(0, 0, 3);
+
+    const light = new THREE.AmbientLight(0xffffff, 1);
+    scene.add(light);
+
+    const gltfLoader = new GLTFLoader();
+    const modelPath =
+        props.modelType === 'sneaker'
+            ? '/model/shoe-optimized-arne.glb'
+            : '/model/shoes_with_heart_heel/scene.gltf';
+
+    gltfLoader.load(
+        modelPath,
+        (gltf) => {
+            model = gltf.scene;
+            model.scale.set(0.5, 0.5, 0.5);
+            model.position.set(0, -0.5, 0);
+            scene.add(model);
+
+            if (props.modelType === 'sneaker' && props.layers) {
+                applySneakerColors(model, props.layers);
+            } else if (props.modelType === 'heel' && props.layers) {
+                applyHeelColors(model, props.layers);
+            }
+
+            const animate = () => {
+                renderer.render(scene, camera);
+            };
+            animate();
+        },
+        undefined,
+        (error) => {
+            console.error('Error loading model:', error);
+        }
+    );
+};
+
+// Apply colors for sneaker layers
+const applySneakerColors = (model, layers) => {
+    const materialColors = {
+        inside: layers.inside?.color,
+        laces: layers.laces?.color,
+        outside1: layers.outside1?.color,
+        outside2: layers.outside2?.color,
+        sole1: layers.sole1?.color,
+        sole2: layers.sole2?.color,
+    };
+
+    model.traverse((child) => {
+        if (child.isMesh && child.material) {
+            const layerName = child.name.toLowerCase();
+            if (materialColors[layerName]) {
+                child.material.dispose(); // Dispose old material
+                child.material = new THREE.MeshStandardMaterial({
+                    color: new THREE.Color(materialColors[layerName]),
+                });
+            }
+        }
+    });
+};
+
+// Apply colors for heel layers
+const applyHeelColors = (model, layers) => {
+    const materialColors = {
+        object_2: layers.Object_2?.color,
+        object_3: layers.Object_3?.color,
+        object_4: layers.Object_4?.color,
+        object_5: layers.Object_5?.color,
+    };
+
+    model.traverse((child) => {
+        if (child.isMesh && child.material) {
+            const layerName = child.name.toLowerCase();
+            if (materialColors[layerName]) {
+                child.material.dispose(); // Dispose old material
+                child.material = new THREE.MeshStandardMaterial({
+                    color: new THREE.Color(materialColors[layerName]),
+                });
+            }
+        }
+    });
+};
+
+// Cleanup resources on component unmount
+const cleanupThreeJS = () => {
+    if (animationId) cancelAnimationFrame(animationId);
+    if (renderer) renderer.dispose();
+    if (scene) {
+        scene.traverse((object) => {
+            if (object.isMesh) {
+                object.geometry.dispose();
+                if (Array.isArray(object.material)) {
+                    object.material.forEach((mat) => mat.dispose());
+                } else if (object.material) {
+                    object.material.dispose();
+                }
+            }
+        });
+    }
+    scene = null;
+    camera = null;
+    model = null;
 };
 
 onMounted(() => {
     initializeThreeJS();
+    window.addEventListener('resize', onResize);
 });
+
+onUnmounted(() => {
+    cleanupThreeJS();
+    window.removeEventListener('resize', onResize);
+});
+
+// Handle window resize
+const onResize = () => {
+    const canvas = document.querySelector(`.${props.canvasClass}`);
+    if (canvas && renderer && camera) {
+        renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+        camera.aspect = canvas.clientWidth / canvas.clientHeight;
+        camera.updateProjectionMatrix();
+    }
+};
 </script>
 
 <template>
