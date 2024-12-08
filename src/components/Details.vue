@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps } from 'vue';
+import { defineProps, ref, onMounted } from 'vue';
 
 const props = defineProps({
     order: {
@@ -20,6 +20,34 @@ const remove = () => {
 const ship = () => {
     console.log('Shipped clicked');
 };
+
+// Ref for the canvas element
+const canvasRef = ref(null);
+
+// Function to draw the configured shoe on the canvas
+const drawShoe = () => {
+    const canvas = canvasRef.value;
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        // Clear the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Example drawing logic (replace with your shoe drawing logic)
+        ctx.fillStyle = '#ccc'; // Shoe base color
+        ctx.fillRect(20, 20, 160, 80); // Draw the shoe base
+        
+        ctx.fillStyle = 'black'; // Shoe outline
+        ctx.strokeRect(20, 20, 160, 80); // Outline of the shoe
+
+        // Add any other shoe details here
+        ctx.fillStyle = '#fff'; // Color for laces
+        ctx.fillRect(40, 30, 120, 10); // Example laces
+    }
+};
+
+onMounted(() => {
+    drawShoe();
+});
 </script>
 
 <template>
@@ -34,7 +62,9 @@ const ship = () => {
                 <p><strong>Status:</strong> {{ order.status }}</p>
                 <p><strong>Created At:</strong> {{ order.createdAt }}</p>
                 <p><strong>Model Type:</strong> {{ order.modelType }}</p>
-                <!-- Add other details as needed -->
+                <div class="canvas-container">
+                    <canvas ref="canvasRef" width="200" height="100"></canvas>
+                </div>
             </div>
             <div class="actions">
                 <button @click="remove" class="btn cancel">Remove / Cancel</button>
@@ -76,6 +106,17 @@ const ship = () => {
 
 .details {
     flex-grow: 1; /* Allow details to grow */
+}
+
+.canvas-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ccc; /* Optional border for the canvas */
+    padding: 10px; /* Padding around the canvas */
+    border-radius: 6px; /* Rounded corners for the canvas container */
+    background: #f9f9f9; /* Light background for contrast */
 }
 
 .actions {

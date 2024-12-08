@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import OrderCard from '../components/OrderCard.vue';
-import OrderCardDetailed from '../components/OrderCardDetailed.vue';
+import OrderCardDetailed from '../components/Details.vue';
 
 const orders = ref([]);
 const inProductionOrders = ref([]);
