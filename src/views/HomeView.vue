@@ -75,15 +75,3 @@ onMounted(() => {
         </div>
     </div>
 </template>
-
-<style>
-.models-container {
-    text-align: center;
-}
-
-.model-container-flexbox {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-</style>

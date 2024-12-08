@@ -28,29 +28,5 @@ const navigateToLogin = () => {
 </script>
 
 <style scoped>
-.headerMainfront {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-}
 
-.headerMain_logo img {
-    height: 40px;
-}
-
-.headerMain_login {
-    width: 100px;
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    justify-content: center;
-}
-
-.headerMain_login:hover {
-    background-color: #0056b3;
-}
 </style>
