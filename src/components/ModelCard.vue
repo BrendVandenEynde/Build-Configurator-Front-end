@@ -47,10 +47,12 @@ const handleButtonClick = () => {
 }
 
 .model-container-model-button {
+  font-family: 'Helvetica', sans-serif;
+  font-size: 1rem;
   margin-top: 10px;
   padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
+  background-color: #000;
+  color: #6af244;
   border: none;
   border-radius: 5px;
   cursor: pointer;
