@@ -10,13 +10,26 @@ const cancelledOrders = ref([]);
 
 const fetchOrders = async () => {
     try {
-        const response = await axios.get('https://build-configurator-back-end.onrender.com/api/v1/orders');
+        const response = await axios.get(
+            'https://build-configurator-back-end.onrender.com/api/v1/orders'
+        );
         orders.value = response.data?.data?.orders || [];
-        inProductionOrders.value = orders.value.filter(order => order.status === 'in production');
-        shippedDeliveredOrders.value = orders.value.filter(order => ['shipped', 'delivered'].includes(order.status));
-        cancelledOrders.value = orders.value.filter(order => order.status === 'cancelled');
+
+        // Categorize orders
+        inProductionOrders.value = orders.value.filter(
+            (order) => order.status === 'in production'
+        );
+        shippedDeliveredOrders.value = orders.value.filter((order) =>
+            ['shipped', 'delivered'].includes(order.status)
+        );
+        cancelledOrders.value = orders.value.filter(
+            (order) => order.status === 'cancelled'
+        );
     } catch (error) {
-        console.error('Error fetching orders:', error.response || error.message || error);
+        console.error(
+            'Error fetching orders:',
+            error.response || error.message || error
+        );
     }
 };
 
@@ -28,35 +41,39 @@ onMounted(fetchOrders);
         <h1>Dashboard</h1>
 
         <h2>All Orders</h2>
-        <div>
+        <div class="order-list">
             <OrderCard v-for="order in orders" :key="order._id" :orderNumber="order.orderNumber"
                 :customerName="order.customerName" :customerEmail="order.customerEmail" :shoeSize="order.shoeSize"
                 :status="order.status" :createdAt="order.createdAt" :modelType="order.modelType"
-                :canvasClass="'canvas-' + order._id" />
+                :canvasClass="'canvas-' + order._id"
+                :layers="order.modelType === 'sneaker' ? order.layers : order.heelLayers" />
         </div>
 
         <h2>In Production</h2>
-        <div>
+        <div class="order-list">
             <OrderCard v-for="order in inProductionOrders" :key="order._id" :orderNumber="order.orderNumber"
                 :customerName="order.customerName" :customerEmail="order.customerEmail" :shoeSize="order.shoeSize"
                 :status="order.status" :createdAt="order.createdAt" :modelType="order.modelType"
-                :canvasClass="'canvas-' + order._id" />
+                :canvasClass="'canvas-' + order._id"
+                :layers="order.modelType === 'sneaker' ? order.layers : order.heelLayers" />
         </div>
 
         <h2>Shipped and Delivered</h2>
-        <div>
+        <div class="order-list">
             <OrderCard v-for="order in shippedDeliveredOrders" :key="order._id" :orderNumber="order.orderNumber"
                 :customerName="order.customerName" :customerEmail="order.customerEmail" :shoeSize="order.shoeSize"
                 :status="order.status" :createdAt="order.createdAt" :modelType="order.modelType"
-                :canvasClass="'canvas-' + order._id" />
+                :canvasClass="'canvas-' + order._id"
+                :layers="order.modelType === 'sneaker' ? order.layers : order.heelLayers" />
         </div>
 
         <h2>Cancelled</h2>
-        <div>
+        <div class="order-list">
             <OrderCard v-for="order in cancelledOrders" :key="order._id" :orderNumber="order.orderNumber"
                 :customerName="order.customerName" :customerEmail="order.customerEmail" :shoeSize="order.shoeSize"
                 :status="order.status" :createdAt="order.createdAt" :modelType="order.modelType"
-                :canvasClass="'canvas-' + order._id" />
+                :canvasClass="'canvas-' + order._id"
+                :layers="order.modelType === 'sneaker' ? order.layers : order.heelLayers" />
         </div>
     </div>
 </template>
@@ -68,9 +85,11 @@ onMounted(fetchOrders);
 
 h2 {
     margin-top: 20px;
+    font-size: 1.5em;
+    color: #333;
 }
 
-.dashboard-container div {
+.order-list {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
