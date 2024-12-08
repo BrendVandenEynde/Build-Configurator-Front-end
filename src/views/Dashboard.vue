@@ -1,12 +1,15 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import OrderCard from '../components/orderCard.vue';
+import OrderCard from '../components/OrderCard.vue';
+import OrderCardDetailed from '../components/OrderCardDetailed.vue';
 
 const orders = ref([]);
 const inProductionOrders = ref([]);
 const shippedDeliveredOrders = ref([]);
 const cancelledOrders = ref([]);
+const selectedOrder = ref(null);
+const showDetails = ref(false);
 
 const fetchOrders = async () => {
     try {
@@ -33,6 +36,18 @@ const fetchOrders = async () => {
     }
 };
 
+// Function to open detailed view
+const openDetailView = (order) => {
+    selectedOrder.value = order;
+    showDetails.value = true;
+};
+
+// Function to close detailed view
+const closeDetailView = () => {
+    showDetails.value = false;
+    selectedOrder.value = null;
+};
+
 onMounted(fetchOrders);
 </script>
 
@@ -42,30 +57,64 @@ onMounted(fetchOrders);
 
         <h2>In Production</h2>
         <div class="order-list">
-            <OrderCard v-for="order in inProductionOrders" :key="order._id" :orderNumber="order.orderNumber"
-                :customerName="order.customerName" :customerEmail="order.customerEmail" :shoeSize="order.shoeSize"
-                :status="order.status" :createdAt="order.createdAt" :modelType="order.modelType"
+            <OrderCard
+                v-for="order in inProductionOrders"
+                :key="order._id"
+                :orderNumber="order.orderNumber"
+                :customerName="order.customerName"
+                :customerEmail="order.customerEmail"
+                :shoeSize="order.shoeSize"
+                :status="order.status"
+                :createdAt="order.createdAt"
+                :modelType="order.modelType"
                 :canvasClass="'canvas-' + order._id"
-                :layers="order.modelType === 'sneaker' ? order.layers : order.heelLayers" />
+                :layers="order.modelType === 'sneaker' ? order.layers : order.heelLayers"
+                @click="openDetailView(order)" 
+            />
         </div>
 
         <h2>Shipped and Delivered</h2>
         <div class="order-list">
-            <OrderCard v-for="order in shippedDeliveredOrders" :key="order._id" :orderNumber="order.orderNumber"
-                :customerName="order.customerName" :customerEmail="order.customerEmail" :shoeSize="order.shoeSize"
-                :status="order.status" :createdAt="order.createdAt" :modelType="order.modelType"
+            <OrderCard
+                v-for="order in shippedDeliveredOrders"
+                :key="order._id"
+                :orderNumber="order.orderNumber"
+                :customerName="order.customerName"
+                :customerEmail="order.customerEmail"
+                :shoeSize="order.shoeSize"
+                :status="order.status"
+                :createdAt="order.createdAt"
+                :modelType="order.modelType"
                 :canvasClass="'canvas-' + order._id"
-                :layers="order.modelType === 'sneaker' ? order.layers : order.heelLayers" />
+                :layers="order.modelType === 'sneaker' ? order.layers : order.heelLayers"
+                @click="openDetailView(order)"
+            />
         </div>
 
         <h2>Cancelled</h2>
         <div class="order-list">
-            <OrderCard v-for="order in cancelledOrders" :key="order._id" :orderNumber="order.orderNumber"
-                :customerName="order.customerName" :customerEmail="order.customerEmail" :shoeSize="order.shoeSize"
-                :status="order.status" :createdAt="order.createdAt" :modelType="order.modelType"
+            <OrderCard
+                v-for="order in cancelledOrders"
+                :key="order._id"
+                :orderNumber="order.orderNumber"
+                :customerName="order.customerName"
+                :customerEmail="order.customerEmail"
+                :shoeSize="order.shoeSize"
+                :status="order.status"
+                :createdAt="order.createdAt"
+                :modelType="order.modelType"
                 :canvasClass="'canvas-' + order._id"
-                :layers="order.modelType === 'sneaker' ? order.layers : order.heelLayers" />
+                :layers="order.modelType === 'sneaker' ? order.layers : order.heelLayers"
+                @click="openDetailView(order)" 
+            />
         </div>
+
+        <!-- Conditional rendering of the OrderCardDetailed component -->
+        <OrderCardDetailed
+            v-if="showDetails"
+            :order="selectedOrder"
+            :close="closeDetailView"
+        />
     </div>
 </template>
 
