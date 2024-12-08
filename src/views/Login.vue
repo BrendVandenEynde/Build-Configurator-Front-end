@@ -9,44 +9,61 @@
       <input type="text" placeholder="Username" v-model="username" class="input-field" />
       <input type="password" placeholder="Password" v-model="password" class="input-field" />
       <button class="login-button" @click="handleLogin">Login</button>
+      <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const username = ref('');
 const password = ref('');
+const errorMessage = ref('');
+const router = useRouter();
 
 const handleLogin = () => {
-  console.log('Login attempted with:', username.value, password.value);
+  // Simulated login check (replace with actual logic later)
+  if (username.value === 'admin' && password.value === 'admin123') {
+    router.push('/dashboard'); // Redirect to admin dashboard
+  } else {
+    errorMessage.value = 'Invalid username or password.'; // Show error message
+  }
 };
 </script>
 
 <style scoped>
 /* Prevent scrolling on body and html */
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
-  overflow: hidden; /* Prevent scrolling */
+  overflow: hidden;
+  /* Prevent scrolling */
 }
 
 .login-container {
   position: relative;
   width: 100%;
-  height: 100vh; /* Full viewport height */
-  overflow: hidden; /* Prevent scrolling within the container */
+  height: 100vh;
+  /* Full viewport height */
+  overflow: hidden;
+  /* Prevent scrolling within the container */
 }
 
 .background-video {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  object-fit: cover; /* Cover the entire area without distortion */
-  z-index: -1; /* Place the video behind the login form */
+  width: 100%;
+  /* Full width */
+  height: 100%;
+  /* Full height */
+  object-fit: cover;
+  /* Cover the entire area without distortion */
+  z-index: -1;
+  /* Place the video behind the login form */
 }
 
 .login-form {
@@ -56,11 +73,14 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%; /* Allow form to occupy full height */
+  height: 100%;
+  /* Allow form to occupy full height */
   color: white;
   text-align: center;
-  padding: 20px; /* Optional padding for aesthetics */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optional shadow for depth */
+  padding: 20px;
+  /* Optional padding for aesthetics */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  /* Optional shadow for depth */
 }
 
 .input-field {
@@ -82,5 +102,10 @@ html, body {
 
 .login-button:hover {
   background-color: #0056b3;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
 }
 </style>

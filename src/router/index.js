@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Layout from '../components/Layout.vue';
 import HomeView from '../views/HomeView.vue';
 import Login from '../views/Login.vue';
+import Dashboard from '../views/Dashboard.vue'; // Import the Dashboard component
 
 const routes = [
     {
@@ -18,6 +19,11 @@ const routes = [
                 path: 'login',
                 name: 'Login',
                 component: Login, // This should render when accessing '/login'
+            },
+            {
+                path: 'dashboard',
+                name: 'Dashboard',
+                component: Dashboard, // Admin dashboard route
             },
         ],
     },
