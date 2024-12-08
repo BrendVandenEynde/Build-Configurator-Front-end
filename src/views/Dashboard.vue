@@ -40,15 +40,6 @@ onMounted(fetchOrders);
     <div class="dashboard-container">
         <h1>Dashboard</h1>
 
-        <h2>All Orders</h2>
-        <div class="order-list">
-            <OrderCard v-for="order in orders" :key="order._id" :orderNumber="order.orderNumber"
-                :customerName="order.customerName" :customerEmail="order.customerEmail" :shoeSize="order.shoeSize"
-                :status="order.status" :createdAt="order.createdAt" :modelType="order.modelType"
-                :canvasClass="'canvas-' + order._id"
-                :layers="order.modelType === 'sneaker' ? order.layers : order.heelLayers" />
-        </div>
-
         <h2>In Production</h2>
         <div class="order-list">
             <OrderCard v-for="order in inProductionOrders" :key="order._id" :orderNumber="order.orderNumber"
