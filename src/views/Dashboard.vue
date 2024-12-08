@@ -1,40 +1,7 @@
-<template>
-    <div class="dashboard-container">
-        <h1>Dashboard</h1>
-
-        <h2>All Orders</h2>
-        <ul>
-            <li v-for="order in orders" :key="order._id">
-                Order Number: {{ order.orderNumber }} - Customer: {{ order.customerName }} - Status: {{ order.status }}
-            </li>
-        </ul>
-
-        <h2>In Production</h2>
-        <ul>
-            <li v-for="order in inProductionOrders" :key="order._id">
-                Order Number: {{ order.orderNumber }} - Customer: {{ order.customerName }}
-            </li>
-        </ul>
-
-        <h2>Shipped and Delivered</h2>
-        <ul>
-            <li v-for="order in shippedDeliveredOrders" :key="order._id">
-                Order Number: {{ order.orderNumber }} - Customer: {{ order.customerName }} - Status: {{ order.status }}
-            </li>
-        </ul>
-
-        <h2>Cancelled</h2>
-        <ul>
-            <li v-for="order in cancelledOrders" :key="order._id">
-                Order Number: {{ order.orderNumber }} - Customer: {{ order.customerName }}
-            </li>
-        </ul>
-    </div>
-</template>
-
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import OrderCard from '../components/orderCard.vue';
 
 const orders = ref([]);
 const inProductionOrders = ref([]);
@@ -43,10 +10,8 @@ const cancelledOrders = ref([]);
 
 const fetchOrders = async () => {
     try {
-        const response = await axios.get('https://build-configurator-back-end.onrender.com/api/v1/orders'); // Full URL
-        console.log('API Response:', response); // Log the full response
-
-        orders.value = response.data?.data?.orders || []; // Use optional chaining
+        const response = await axios.get('https://build-configurator-back-end.onrender.com/api/v1/orders');
+        orders.value = response.data?.data?.orders || [];
         inProductionOrders.value = orders.value.filter(order => order.status === 'in production');
         shippedDeliveredOrders.value = orders.value.filter(order => ['shipped', 'delivered'].includes(order.status));
         cancelledOrders.value = orders.value.filter(order => order.status === 'cancelled');
@@ -58,6 +23,44 @@ const fetchOrders = async () => {
 onMounted(fetchOrders);
 </script>
 
+<template>
+    <div class="dashboard-container">
+        <h1>Dashboard</h1>
+
+        <h2>All Orders</h2>
+        <div>
+            <OrderCard v-for="order in orders" :key="order._id" :orderNumber="order.orderNumber"
+                :customerName="order.customerName" :customerEmail="order.customerEmail" :shoeSize="order.shoeSize"
+                :status="order.status" :createdAt="order.createdAt" :modelType="order.modelType"
+                :canvasClass="'canvas-' + order._id" />
+        </div>
+
+        <h2>In Production</h2>
+        <div>
+            <OrderCard v-for="order in inProductionOrders" :key="order._id" :orderNumber="order.orderNumber"
+                :customerName="order.customerName" :customerEmail="order.customerEmail" :shoeSize="order.shoeSize"
+                :status="order.status" :createdAt="order.createdAt" :modelType="order.modelType"
+                :canvasClass="'canvas-' + order._id" />
+        </div>
+
+        <h2>Shipped and Delivered</h2>
+        <div>
+            <OrderCard v-for="order in shippedDeliveredOrders" :key="order._id" :orderNumber="order.orderNumber"
+                :customerName="order.customerName" :customerEmail="order.customerEmail" :shoeSize="order.shoeSize"
+                :status="order.status" :createdAt="order.createdAt" :modelType="order.modelType"
+                :canvasClass="'canvas-' + order._id" />
+        </div>
+
+        <h2>Cancelled</h2>
+        <div>
+            <OrderCard v-for="order in cancelledOrders" :key="order._id" :orderNumber="order.orderNumber"
+                :customerName="order.customerName" :customerEmail="order.customerEmail" :shoeSize="order.shoeSize"
+                :status="order.status" :createdAt="order.createdAt" :modelType="order.modelType"
+                :canvasClass="'canvas-' + order._id" />
+        </div>
+    </div>
+</template>
+
 <style scoped>
 .dashboard-container {
     padding: 20px;
@@ -67,12 +70,9 @@ h2 {
     margin-top: 20px;
 }
 
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-li {
-    margin: 5px 0;
+.dashboard-container div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 </style>
