@@ -54,18 +54,25 @@ const initializeThreeJS = () => {
         modelPath,
         (gltf) => {
             model = gltf.scene;
-            model.scale.set(0.5, 0.5, 0.5);
+
+            // Scale down the heel model and rotate the sneaker model
+            if (props.modelType === 'heel') {
+                model.scale.set(0.2, 0.2, 0.2); // Scale down the heel model
+            } else if (props.modelType === 'sneaker') {
+                model.scale.set(0.5, 0.5, 0.5); // Scale the sneaker model
+                model.rotation.y = THREE.MathUtils.degToRad(60); // Rotate the sneaker model
+            }
+
             model.position.set(0, -0.5, 0);
             scene.add(model);
 
-            if (props.modelType === 'sneaker' && props.layers) {
-                applySneakerColors(model, props.layers);
-            } else if (props.modelType === 'heel' && props.layers) {
-                applyHeelColors(model, props.layers);
+            if (props.layers) {
+                applyColors(model, props.layers);
             }
 
             const animate = () => {
                 renderer.render(scene, camera);
+                animationId = requestAnimationFrame(animate); // Keep animating
             };
             animate();
         },
@@ -76,47 +83,51 @@ const initializeThreeJS = () => {
     );
 };
 
-// Apply colors for sneaker layers
-const applySneakerColors = (model, layers) => {
-    const materialColors = {
-        inside: layers.inside?.color,
-        laces: layers.laces?.color,
-        outside1: layers.outside1?.color,
-        outside2: layers.outside2?.color,
-        sole1: layers.sole1?.color,
-        sole2: layers.sole2?.color,
-    };
+const applyColors = (model, layers) => {
+    let materialColors = {};
+
+    if (props.modelType === 'sneaker') {
+        materialColors = {
+            inside: layers.inside?.color || "undefined",
+            laces: layers.laces?.color || "undefined",
+            outside1: layers.outside1?.color || "undefined",
+            outside2: layers.outside2?.color || "undefined",
+            sole1: layers.sole1?.color || "undefined",
+            sole2: layers.sole2?.color || "undefined",
+        };
+    } else if (props.modelType === 'heel') {
+        materialColors = {
+            object_2: layers.Object_2?.color || "undefined",
+            object_3: layers.Object_3?.color || "undefined",
+            object_4: layers.Object_4?.color || "undefined",
+            object_5: layers.Object_5?.color || "undefined",
+        };
+    }
+
+   // console.log("Material Colors:", materialColors); // Log the colors being applied
 
     model.traverse((child) => {
         if (child.isMesh && child.material) {
             const layerName = child.name.toLowerCase();
+         //   console.log(`Child name: ${layerName}`);
+
+            // Check if the material color is defined
             if (materialColors[layerName]) {
                 child.material.dispose(); // Dispose old material
-                child.material = new THREE.MeshStandardMaterial({
-                    color: new THREE.Color(materialColors[layerName]),
-                });
-            }
-        }
-    });
-};
+                const colorValue = materialColors[layerName];
 
-// Apply colors for heel layers
-const applyHeelColors = (model, layers) => {
-    const materialColors = {
-        object_2: layers.Object_2?.color,
-        object_3: layers.Object_3?.color,
-        object_4: layers.Object_4?.color,
-        object_5: layers.Object_5?.color,
-    };
-
-    model.traverse((child) => {
-        if (child.isMesh && child.material) {
-            const layerName = child.name.toLowerCase();
-            if (materialColors[layerName]) {
-                child.material.dispose(); // Dispose old material
-                child.material = new THREE.MeshStandardMaterial({
-                    color: new THREE.Color(materialColors[layerName]),
-                });
+                if (typeof colorValue === 'string' || colorValue instanceof String) {
+                    child.material = new THREE.MeshStandardMaterial({
+                        color: new THREE.Color(colorValue),
+                    });
+            //        console.log(`Applied color ${colorValue} to ${layerName}`);
+                } else {
+             //       console.log(`Invalid color value for ${layerName}: ${colorValue}`);
+                }
+            } else {
+                // Optionally apply a default color
+            //    console.log(`No color defined for layer: ${layerName}, applying default color.`);
+                child.material = new THREE.MeshStandardMaterial({ color: new THREE.Color('white') });
             }
         }
     });
