@@ -21,9 +21,9 @@ const routes = [
                 component: Login, // This should render when accessing '/login'
             },
             {
-                path: 'dashboard',
+                path: 'dashboard', // New route for the dashboard
                 name: 'Dashboard',
-                component: Dashboard, // Admin dashboard route
+                component: Dashboard, // This should render when accessing '/dashboard'
             },
         ],
     },
