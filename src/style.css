@@ -86,10 +86,9 @@ header {
 
 .login-button {
     padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
+    background-color: #ffffff;
+    color: #000;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
     justify-content: center;
 }

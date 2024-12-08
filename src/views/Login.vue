@@ -53,6 +53,7 @@ body {
   margin: 0;
   overflow: hidden;
   /* Prevent scrolling */
+  font-family: 'Helvetica', sans-serif;;
 }
 
 .login-container {
@@ -76,6 +77,9 @@ body {
   /* Cover the entire area without distortion */
   z-index: -1;
   /* Place the video behind the login form */
+
+  
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .login-form {
@@ -87,12 +91,23 @@ body {
   justify-content: center;
   height: 100%;
   /* Allow form to occupy full height */
-  color: white;
+  color: #000;
   text-align: center;
   padding: 20px;
   /* Optional padding for aesthetics */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   /* Optional shadow for depth */
+
+  width: 350px;
+  height: 250px;
+  margin: 0 auto;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);
+  background-color: #6af244;
+  border: 2px solid #000;
 }
 
 .input-field {
@@ -101,12 +116,15 @@ body {
   width: 200px;
   border: none;
   border-radius: 5px;
+  margin-top: 10;
 }
 
+
 .login-button {
+  margin-top: 10px;
   padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
+  background-color: #000;
+  color: #6af244;
   border: none;
   border-radius: 5px;
   cursor: pointer;
