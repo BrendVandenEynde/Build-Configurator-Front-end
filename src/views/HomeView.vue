@@ -69,7 +69,7 @@ onMounted(() => {
         <h1>Models we offer to configure.</h1>
         <div class="model-container-flexbox">
             <ModelCard title="Heart Heel" price="240$" size="37-42" canvasClass="canvas1"
-                link="https://your-heart-heel-config-url.com" />
+                link="https://three-js-configurator.vercel.app/" />
             <ModelCard title="Sneaker" price="180$" size="38-46" canvasClass="canvas2"
                 link="https://build-sneaker-model-config.onrender.com/" />
         </div>
