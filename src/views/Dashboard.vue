@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import OrderCard from '../components/OrderCard.vue';
+import OrderCard from '../components/CardOrder.vue';
 import OrderCardDetailed from '../components/Details.vue';
 
 const orders = ref([]);
@@ -57,64 +57,36 @@ onMounted(fetchOrders);
 
         <h2>In Production</h2>
         <div class="order-list">
-            <OrderCard
-                v-for="order in inProductionOrders"
-                :key="order._id"
-                :orderNumber="order.orderNumber"
-                :customerName="order.customerName"
-                :customerEmail="order.customerEmail"
-                :shoeSize="order.shoeSize"
-                :status="order.status"
-                :createdAt="order.createdAt"
-                :modelType="order.modelType"
+            <OrderCard v-for="order in inProductionOrders" :key="order._id" :orderNumber="order.orderNumber"
+                :customerName="order.customerName" :customerEmail="order.customerEmail" :shoeSize="order.shoeSize"
+                :status="order.status" :createdAt="order.createdAt" :modelType="order.modelType"
                 :canvasClass="'canvas-' + order._id"
                 :layers="order.modelType === 'sneaker' ? order.layers : order.heelLayers"
-                @click="openDetailView(order)" 
-            />
+                @click="openDetailView(order)" />
         </div>
 
         <h2>Shipped and Delivered</h2>
         <div class="order-list">
-            <OrderCard
-                v-for="order in shippedDeliveredOrders"
-                :key="order._id"
-                :orderNumber="order.orderNumber"
-                :customerName="order.customerName"
-                :customerEmail="order.customerEmail"
-                :shoeSize="order.shoeSize"
-                :status="order.status"
-                :createdAt="order.createdAt"
-                :modelType="order.modelType"
+            <OrderCard v-for="order in shippedDeliveredOrders" :key="order._id" :orderNumber="order.orderNumber"
+                :customerName="order.customerName" :customerEmail="order.customerEmail" :shoeSize="order.shoeSize"
+                :status="order.status" :createdAt="order.createdAt" :modelType="order.modelType"
                 :canvasClass="'canvas-' + order._id"
                 :layers="order.modelType === 'sneaker' ? order.layers : order.heelLayers"
-                @click="openDetailView(order)"
-            />
+                @click="openDetailView(order)" />
         </div>
 
         <h2>Cancelled</h2>
         <div class="order-list">
-            <OrderCard
-                v-for="order in cancelledOrders"
-                :key="order._id"
-                :orderNumber="order.orderNumber"
-                :customerName="order.customerName"
-                :customerEmail="order.customerEmail"
-                :shoeSize="order.shoeSize"
-                :status="order.status"
-                :createdAt="order.createdAt"
-                :modelType="order.modelType"
+            <OrderCard v-for="order in cancelledOrders" :key="order._id" :orderNumber="order.orderNumber"
+                :customerName="order.customerName" :customerEmail="order.customerEmail" :shoeSize="order.shoeSize"
+                :status="order.status" :createdAt="order.createdAt" :modelType="order.modelType"
                 :canvasClass="'canvas-' + order._id"
                 :layers="order.modelType === 'sneaker' ? order.layers : order.heelLayers"
-                @click="openDetailView(order)" 
-            />
+                @click="openDetailView(order)" />
         </div>
 
         <!-- Conditional rendering of the OrderCardDetailed component -->
-        <OrderCardDetailed
-            v-if="showDetails"
-            :order="selectedOrder"
-            :close="closeDetailView"
-        />
+        <OrderCardDetailed v-if="showDetails" :order="selectedOrder" :close="closeDetailView" />
     </div>
 </template>
 

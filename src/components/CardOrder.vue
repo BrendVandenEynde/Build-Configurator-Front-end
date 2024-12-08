@@ -104,12 +104,12 @@ const applyColors = (model, layers) => {
         };
     }
 
-   // console.log("Material Colors:", materialColors); // Log the colors being applied
+    // console.log("Material Colors:", materialColors); // Log the colors being applied
 
     model.traverse((child) => {
         if (child.isMesh && child.material) {
             const layerName = child.name.toLowerCase();
-         //   console.log(`Child name: ${layerName}`);
+            //   console.log(`Child name: ${layerName}`);
 
             // Check if the material color is defined
             if (materialColors[layerName]) {
@@ -120,13 +120,13 @@ const applyColors = (model, layers) => {
                     child.material = new THREE.MeshStandardMaterial({
                         color: new THREE.Color(colorValue),
                     });
-            //        console.log(`Applied color ${colorValue} to ${layerName}`);
+                    //        console.log(`Applied color ${colorValue} to ${layerName}`);
                 } else {
-             //       console.log(`Invalid color value for ${layerName}: ${colorValue}`);
+                    //       console.log(`Invalid color value for ${layerName}: ${colorValue}`);
                 }
             } else {
                 // Optionally apply a default color
-            //    console.log(`No color defined for layer: ${layerName}, applying default color.`);
+                //    console.log(`No color defined for layer: ${layerName}, applying default color.`);
                 child.material = new THREE.MeshStandardMaterial({ color: new THREE.Color('white') });
             }
         }
