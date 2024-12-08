@@ -32,16 +32,60 @@ const drawShoe = () => {
         // Clear the canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Example drawing logic (replace with your shoe drawing logic)
-        ctx.fillStyle = '#ccc'; // Shoe base color
-        ctx.fillRect(20, 20, 160, 80); // Draw the shoe base
+        // Draw the shoe based on the model type and layers
+        if (props.order.modelType === 'heel') {
+            drawHeel(ctx, props.order.heelLayers);
+        } else if (props.order.modelType === 'sneaker') {
+            drawSneaker(ctx, props.order.sneakerLayers);
+        }
+    }
+};
 
-        ctx.fillStyle = 'black'; // Shoe outline
-        ctx.strokeRect(20, 20, 160, 80); // Outline of the shoe
+// Function to draw a heel model
+const drawHeel = (ctx, layers) => {
+    // Assuming layers are structured as an object with different parts
+    ctx.fillStyle = layers.Object_2.color; // Example for color of a specific part
+    ctx.fillRect(20, 50, 60, 30); // Drawing a rectangle for demo
 
-        // Add any other shoe details here
-        ctx.fillStyle = '#fff'; // Color for laces
-        ctx.fillRect(40, 30, 120, 10); // Example laces
+    // Draw other parts similarly...
+    ctx.fillStyle = layers.Object_3.color; // Change color for another part
+    ctx.fillRect(20, 20, 60, 30);
+};
+
+// Function to draw a sneaker model
+const drawSneaker = (ctx, layers) => {
+    if (!layers) return; // Safety check for layers
+
+    console.log(layers); // Debugging to check sneaker layer data
+    
+    // Drawing sole part
+    if (layers.sole1) {
+        ctx.fillStyle = layers.sole1.color;
+        ctx.fillRect(20, 70, 160, 20); // Sole rectangle (adjust coordinates as needed)
+    }
+    
+    // Drawing outside1 part
+    if (layers.outside1) {
+        ctx.fillStyle = layers.outside1.color;
+        ctx.fillRect(20, 40, 160, 30); // Outside part (adjust coordinates as needed)
+    }
+
+    // Drawing outside2 part
+    if (layers.outside2) {
+        ctx.fillStyle = layers.outside2.color;
+        ctx.fillRect(20, 10, 160, 30); // Another outside part (adjust coordinates as needed)
+    }
+
+    // Drawing inside part
+    if (layers.inside) {
+        ctx.fillStyle = layers.inside.color;
+        ctx.fillRect(40, 50, 120, 20); // Inside part (adjust coordinates as needed)
+    }
+
+    // Drawing laces part
+    if (layers.laces) {
+        ctx.fillStyle = layers.laces.color;
+        ctx.fillRect(40, 35, 120, 10); // Laces position (adjust coordinates as needed)
     }
 };
 
