@@ -57,10 +57,41 @@ const ship = async () => {
     }
 };
 
-// Function to handle "Remove / Cancel" button (this can be extended further)
-const remove = () => {
+// Function to handle "Cancel" button
+const remove = async () => {
     console.log('Remove / Cancel clicked');
-    // Placeholder for the remove logic (if needed)
+
+    // Retrieve token from localStorage
+    const token = localStorage.getItem('authToken');
+
+    if (!token) {
+        console.error('Authorization token is missing');
+        return;
+    }
+
+    try {
+        // Make an API call to update the order status to 'cancelled' in the backend
+        const response = await axios.put(
+            `/orders/${props.order._id}`,  // Use base URL set earlier
+            { status: 'cancelled' },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,  // Add the token in the Authorization header
+                }
+            }
+        );
+
+        if (response.status === 200) {
+            console.log('Order status updated to cancelled successfully');
+            // Notify the parent (Dashboard) to update the status in the UI
+            props.updateOrderStatus(props.order._id, 'cancelled');
+            // Close the detailed card view after the "Cancelled" action
+            props.close();
+        }
+    } catch (error) {
+        console.error('Error updating order status:', error.response?.data || error.message);
+        // Optionally, you can handle the error here (show a message, etc.)
+    }
 };
 
 // Canvas reference for the shoe/heel visualization
@@ -144,7 +175,7 @@ onMounted(() => {
                 </div>
             </div>
             <div class="actions">
-                <button @click="remove" class="btn cancel">Remove / Cancel</button>
+                <button @click="remove" class="btn cancel">Cancel</button>
                 <button @click="ship" class="btn ship">Shipped</button>
             </div>
         </div>
