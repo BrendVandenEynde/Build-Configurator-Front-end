@@ -53,7 +53,6 @@ const ship = async () => {
         }
     } catch (error) {
         console.error('Error updating order status:', error.response?.data || error.message);
-        // Optionally, you can handle the error here (show a message, etc.)
     }
 };
 
@@ -90,7 +89,41 @@ const remove = async () => {
         }
     } catch (error) {
         console.error('Error updating order status:', error.response?.data || error.message);
-        // Optionally, you can handle the error here (show a message, etc.)
+    }
+};
+
+// Function to delete the order
+const deleteOrder = async () => {
+    console.log('Delete Order clicked');
+
+    // Retrieve token from localStorage
+    const token = localStorage.getItem('authToken');
+
+    if (!token) {
+        console.error('Authorization token is missing');
+        return;
+    }
+
+    try {
+        // Make an API call to delete the order in the backend
+        const response = await axios.delete(
+            `/orders/${props.order._id}`,  // Use base URL set earlier
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,  // Add the token in the Authorization header
+                }
+            }
+        );
+
+        if (response.status === 200) {
+            console.log('Order deleted successfully');
+            // Notify the parent (Dashboard) to remove the order from the UI
+            props.updateOrderStatus(props.order._id, 'deleted');  // Custom status for deleted
+            // Close the detailed card view after deletion
+            props.close();
+        }
+    } catch (error) {
+        console.error('Error deleting order:', error.response?.data || error.message);
     }
 };
 
@@ -117,9 +150,8 @@ const drawShoe = () => {
 // Function to draw the heel model
 const drawHeel = (ctx, layers) => {
     if (layers) {
-        // Example drawing for heel model (you can extend this logic based on layers structure)
         ctx.fillStyle = layers.Object_2.color;
-        ctx.fillRect(20, 50, 60, 30); // Drawing a rectangle for demo
+        ctx.fillRect(20, 50, 60, 30); // Example drawing
         ctx.fillStyle = layers.Object_3.color;
         ctx.fillRect(20, 20, 60, 30);
     }
@@ -129,7 +161,6 @@ const drawHeel = (ctx, layers) => {
 const drawSneaker = (ctx, layers) => {
     if (!layers) return; // Safety check for layers
 
-    // Example drawing for sneaker model (you can extend this logic based on layers structure)
     if (layers.sole1) {
         ctx.fillStyle = layers.sole1.color;
         ctx.fillRect(20, 70, 160, 20); // Sole rectangle
@@ -175,8 +206,10 @@ onMounted(() => {
                 </div>
             </div>
             <div class="actions">
-                <button @click="remove" class="btn cancel">Cancel</button>
-                <button @click="ship" class="btn ship">Shipped</button>
+                <button v-if="order.status !== 'cancelled'" @click="remove" class="btn cancel">Cancel</button>
+                <button v-if="order.status !== 'cancelled'" @click="ship" class="btn ship">Shipped</button>
+                <button v-if="order.status === 'cancelled'" @click="deleteOrder" class="btn delete">Delete
+                    Order</button>
             </div>
         </div>
     </div>
@@ -262,5 +295,14 @@ onMounted(() => {
 
 .ship:hover {
     background-color: #388e3c;
+}
+
+.delete {
+    background-color: #f44336;
+    color: white;
+}
+
+.delete:hover {
+    background-color: #c62828;
 }
 </style>
