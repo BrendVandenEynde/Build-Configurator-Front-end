@@ -35,7 +35,7 @@ const ship = async () => {
     try {
         // Make an API call to update the order status to 'shipped' in the backend
         const response = await axios.put(
-            `https://build-configurator-back-end.onrender.com/api/v1/orders/${props.order._id}`,
+            `/orders/${props.order._id}`,  // Use base URL set earlier
             { status: 'shipped' },
             {
                 headers: {
